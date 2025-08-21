@@ -24,4 +24,11 @@ export class UserService {
       include: { profile: true },
     });
   }
+
+  findUserById(id: string) {
+    return this.prisma.user.findFirst({
+      where: { id },
+      include: { profile: true },
+    });
+  }
 }
