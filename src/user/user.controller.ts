@@ -15,13 +15,13 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAllUsers() {
+  getAllUsers() {
     return this.userService.findAllUsers();
   }
 
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
-  findUser(@Param('id') id: string) {
+  getUser(@Param('id') id: string) {
     return this.userService.findUserById(id);
   }
 }
