@@ -15,7 +15,10 @@ export class UserService {
   }
 
   findAllUsers() {
-    return this.prisma.user.findMany({ include: { profile: true } });
+    return this.prisma.user.findMany({
+      include: { profile: { omit: { userId: true } } },
+      omit: { password: true },
+    });
   }
 
   findUserByUsername(username: string) {
@@ -28,7 +31,8 @@ export class UserService {
   findUserById(id: string) {
     return this.prisma.user.findFirst({
       where: { id },
-      include: { profile: true },
+      include: { profile: { omit: { userId: true } } },
+      omit: { password: true },
     });
   }
 }
