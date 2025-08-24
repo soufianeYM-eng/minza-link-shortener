@@ -13,15 +13,28 @@ export class UrlService {
 
   async createUrl(id: string, createUrlPayload: CreateUrlDto) {
     const { expirationDate, long } = createUrlPayload;
-    if (expirationDate < Date.now().toString()) {
+
+    // #region Parse date from string to dateTime ISO
+    const parsed = new Date(expirationDate);
+    if (isNaN(parsed.getTime())) {
+      throw new BadRequestException(
+        'Invalid date format. Must be ISO-8601 or timestamp.',
+      );
+    }
+    // #endregion
+
+    // #region Verify if date bigger than now dates
+    if (parsed.getTime() < Date.now()) {
       throw new BadRequestException('Invalid Expiration Date!');
     }
+    // #endregion
+
+    // #region Generate shortUid
     let generatedShortUid = generateShortUid(id, long);
     let checkShortUidExistence = await this.prisma.url.findUnique({
       where: { shortUid: generatedShortUid },
     });
 
-    // Generate shortUid
     while (checkShortUidExistence) {
       generatedShortUid = generateShortUid(id, long);
 
@@ -29,10 +42,16 @@ export class UrlService {
         where: { shortUid: generatedShortUid },
       });
     }
+    // #endregion
 
     // Create Url
     return this.prisma.url.create({
-      data: { ...createUrlPayload, shortUid: generatedShortUid, userId: id },
+      data: {
+        ...createUrlPayload,
+        expirationDate: parsed,
+        shortUid: generatedShortUid,
+        userId: id,
+      },
     });
   }
 }

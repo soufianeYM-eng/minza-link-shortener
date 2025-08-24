@@ -16,6 +16,6 @@ export class UrlController {
   @Post()
   @UseGuards(JwtAuthGuard)
   createUrl(@Request() req, @Body() createUrlDto: CreateUrlDto) {
-    return this.urlService.createUrl(req.user.id, createUrlDto)
+    return this.urlService.createUrl(req.user.sub, createUrlDto)
   }
 }
