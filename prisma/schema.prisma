@@ -41,7 +41,7 @@ model Url {
   long           String
   shortUid       String   @unique
   expirationDate DateTime
-  creationDate   DateTime
+  creationDate   DateTime @default(now())
   userId         String   @unique @db.ObjectId
   user           User     @relation(fields: [userId], references: [id])
 
