@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import CreateUrlDto from './dtos/create-url.dto';
@@ -17,5 +17,10 @@ export class UrlController {
   @UseGuards(JwtAuthGuard)
   createUrl(@Request() req, @Body() createUrlDto: CreateUrlDto) {
     return this.urlService.createUrl(req.user.sub, createUrlDto)
+  }
+
+  @Get('/:id')
+  getLongUrl(@Param('id') shortUid: string) {
+    return this.urlService.findLongUrl(shortUid)
   }
 }

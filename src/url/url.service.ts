@@ -54,4 +54,19 @@ export class UrlService {
       },
     });
   }
+
+  async findLongUrl(shortUid: string) {
+    const urlExistence = await this.prisma.url.findUnique({
+      where: { shortUid },
+      select: { expirationDate: true, long: true },
+    });
+
+    if (!urlExistence) throw new BadRequestException('Invalid URL!');
+
+    const parsed = new Date(urlExistence.expirationDate);
+    if (parsed.getTime() < Date.now())
+      throw new BadRequestException('Link Expired!');
+
+    return urlExistence;
+  }
 }
